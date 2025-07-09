@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Markdown to Trac Wiki Converter</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 50px;
+        }
+        .container {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        textarea {
+            width: 400px;
+            height: 300px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 18px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Markdown to Trac Wiki Converter</h1>
+    <div class="container">
+        <textarea id="markdownInput" placeholder="Enter Markdown here..."></textarea>
+        <textarea id="tracWikiOutput" placeholder="Trac Wiki output will appear here..." readonly></textarea>
+    </div>
+    <button id="convertButton">Convert to Trac Wiki</button>
+
+    <script>
+        document.getElementById('convertButton').addEventListener('click', () => {
+            const markdownText = document.getElementById('markdownInput').value;
+            // Placeholder for conversion logic
+            fetch('/convert', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ markdown_text: markdownText }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('tracWikiOutput').value = data.trac_wiki_text;
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                document.getElementById('tracWikiOutput').value = 'Error during conversion.';
+            });
+        });
+    </script>
+</body>
+</html>
