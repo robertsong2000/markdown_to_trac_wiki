@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    ports:
+      - "5001:5000"
+    volumes:
+      - .:/app
+    environment:
+      FLASK_APP: app.py
+      FLASK_RUN_HOST: 0.0.0.0
+    restart: unless-stopped
+    # command: flask run # 如果您想使用 Flask 自带的开发服务器，可以取消注释此行
+    # 生产环境中建议使用 Gunicorn 或 uWSGI 等 WSGI 服务器
+    # 例如：command: gunicorn -w 4 -b 0.0.0.0:5000 app:app
