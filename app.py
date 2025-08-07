@@ -50,6 +50,34 @@ def markdown_to_trac_wiki(md_text):
     # Fix for re.PatternError: look-behind requires fixed-width pattern
     # The new regex matches a single '|' that is not part of '||'
     md_text = re.sub(r'(?<!\|)\|(?!\|)', r'||', md_text)
+    
+    # 9. Process table headers: make first row bold and remove separator row
+    lines = md_text.split('\n')
+    processed_lines = []
+    in_table = False
+    
+    for i, line in enumerate(lines):
+        # Check if this line is a table row (starts and ends with ||)
+        if line.strip().startswith('||') and line.strip().endswith('||'):
+            if not in_table:
+                # First row of table - make it bold
+                cells = [cell.strip() for cell in line.strip()[2:-2].split('||')]
+                bold_cells = [f"'''{cell}'''" if cell.strip() else "" for cell in cells]
+                processed_line = '||' + '||'.join(bold_cells) + '||'
+                processed_lines.append(processed_line)
+                in_table = True
+            else:
+                # Check if this is a separator row (contains only - and |)
+                if not re.match(r'^\|\|[-\|\s]*\|\|$', line.strip()):
+                    # Regular table row - keep it
+                    processed_lines.append(line)
+                # If it's a separator row, skip it (remove it)
+        else:
+            # Not a table row - keep as is
+            processed_lines.append(line)
+            in_table = False
+    
+    md_text = '\n'.join(processed_lines)
 
     # Further improvements could include:
     # - Handling inline code (``code`` to `code`)
